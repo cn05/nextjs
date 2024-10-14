@@ -1,7 +1,9 @@
 "use client";
 
 import * as z from "zod";
+import axios from "axios";
 
+import { useState } from "react";
 import { useStoreModal } from "@/hooks/use-store-modal";
 import Modal from "../ui/modal";
 import { useForm } from "react-hook-form";
@@ -21,12 +23,8 @@ const formSchema = z.object({
   name: z.string().min(3, "Name is required"),
 });
 
-const onSubmit = async (values: z.infer<typeof formSchema>) => {
-  // TODO: Buat toko
-  console.log(values);
-};
-
 export const StoreModal = () => {
+  const [loading, setLoading] = useState(false);
   const storeModal = useStoreModal();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -35,6 +33,17 @@ export const StoreModal = () => {
       name: "",
     },
   });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    try {
+      setLoading(true);
+
+      const response = await axios.post("/api/stores", values);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Modal
