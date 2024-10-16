@@ -115,7 +115,7 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-full"
+          className="space-y-8 w-full mt-4"
         >
           <div className="grid grid-cols-3 gap-8">
             <FormField
