@@ -5,7 +5,7 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { Store } from "@prisma/client";
+import { Banner } from "@prisma/client";
 import { Trash } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,17 +26,18 @@ import { AlertModal } from "@/components/modals/alert-modal";
 import { ApiAlert } from "@/components/ui/api-alert";
 import { useOrigin } from "@/hooks/use-origin";
 
-interface SettingsFormProps {
-  initialData: Store;
+interface BannerFormProps {
+  initialData: Banner | null;
 }
 
 const formSchema = z.object({
-  name: z.string().min(3),
+  label: z.string().min(3),
+  imageUrl: z.string().min(1),
 });
 
-type SettingFormValues = z.infer<typeof formSchema>;
+type BannerFormValues = z.infer<typeof formSchema>;
 
-export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
+export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
   const params = useParams();
   const router = useRouter();
   const origin = useOrigin();
@@ -44,12 +45,24 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const form = useForm<SettingFormValues>({
+  const title = initialData ? "Edit Banner" : "Add Banner";
+  const description = initialData
+    ? "Edit store banner "
+    : "Add banner for your store";
+  const toastMessage = initialData
+    ? "Banner updated succesfully!"
+    : "Banner created succesfully!";
+  const action = initialData ? "Save Banner" : "Add Banner";
+
+  const form = useForm<BannerFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: initialData || {
+      label: "",
+      imageUrl: "",
+    },
   });
 
-  const onSubmit = async (data: SettingFormValues) => {
+  const onSubmit = async (data: BannerFormValues) => {
     try {
       setLoading(true);
       await axios.patch(`/api/stores/${params.storeId}`, data);
@@ -86,15 +99,17 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
         loading={loading}
       />
       <div className="flex items-center justify-between">
-        <Heading title="Settings" description="Manage your store" />
-        <Button
-          disabled={loading}
-          variant="destructive"
-          size="sm"
-          onClick={() => setOpen(true)}
-        >
-          <Trash className="h-4 w-4" />
-        </Button>
+        <Heading title={title} description={description} />
+        {initialData && (
+          <Button
+            disabled={loading}
+            variant="destructive"
+            size="sm"
+            onClick={() => setOpen(true)}
+          >
+            <Trash className="h-4 w-4" />
+          </Button>
+        )}
       </div>
       <Separator />
       <Form {...form}>
@@ -105,13 +120,13 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
           <div className="grid grid-cols-3 gap-8">
             <FormField
               control={form.control}
-              name="name"
+              name="label"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Label</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Store Name"
+                      placeholder="Label Banner"
                       disabled={loading}
                       {...field}
                     />
@@ -122,16 +137,11 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({ initialData }) => {
             />
           </div>
           <Button disabled={loading} type="submit">
-            Save
+            {action}
           </Button>
         </form>
       </Form>
       <Separator />
-      <ApiAlert
-        title="PUBLIC_API_URL"
-        description={`${origin}/api/${params.storeId}`}
-        variant="public"
-      />
     </>
   );
 };
