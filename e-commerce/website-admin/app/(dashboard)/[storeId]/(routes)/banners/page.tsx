@@ -1,5 +1,8 @@
 import db from "@/lib/db";
 import { BannerClient } from "./components/client";
+import { BannerColumn } from "./components/column";
+
+import { format } from "date-fns";
 
 const BannersPage = async ({ params }: { params: { storeId: string } }) => {
   const banners = await db.banner.findMany({
@@ -11,10 +14,16 @@ const BannersPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
+  const formattedBanners: BannerColumn[] = banners.map((item) => ({
+    id: item.id,
+    label: item.label,
+    createdAt: format(item.createdAt, "MMM do, YYY"),
+  }));
+
   return (
     <div className="flec-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
-        <BannerClient data={banners} />
+        <BannerClient data={formattedBanners} />
       </div>
     </div>
   );
