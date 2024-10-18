@@ -17,7 +17,7 @@ const BannersPage = async ({ params }: { params: { storeId: string } }) => {
   const formattedBanners: BannerColumn[] = banners.map((item) => ({
     id: item.id,
     label: item.label,
-    createdAt: format(item.createdAt, "MMM do, YYY"),
+    createdAt: format(item.createdAt, "MMM do, yyy"),
   }));
 
   return (
