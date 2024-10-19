@@ -89,7 +89,7 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
       setLoading(true);
       await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`);
       router.refresh();
-      router.push("/");
+      router.push(`/${params.storeId}/banners`);
       toast.success("Deleted succesfully!");
     } catch (error) {
       toast.error("Check your data and connection");
