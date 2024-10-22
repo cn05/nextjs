@@ -13,6 +13,7 @@ import { useState } from "react";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -33,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ProductFormProps {
   initialData:
@@ -67,7 +69,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
   const title = initialData ? "Edit Product" : "Add Product";
   const description = initialData
-    ? "Edit store product "
+    ? "Edit product"
     : "Add product for your store";
   const toastMessage = initialData
     ? "Product updated succesfully!"
@@ -93,14 +95,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       setLoading(true);
       if (initialData) {
         await axios.patch(
-          `/api/${params.storeId}/banners/${params.bannerId}`,
+          `/api/${params.storeId}/products/${params.productId}`,
           data
         );
       } else {
-        await axios.post(`/api/${params.storeId}/banners`, data);
+        await axios.post(`/api/${params.storeId}/products`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/banners`);
+      router.push(`/${params.storeId}/products`);
       toast.success(toastMessage);
     } catch (error) {
       toast.error("Please try again");
@@ -112,9 +114,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/banners/${params.bannerId}`);
+      await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
       router.refresh();
-      router.push(`/${params.storeId}/banners`);
+      router.push(`/${params.storeId}/products`);
       toast.success("Deleted succesfully!");
     } catch (error) {
       toast.error("Check your data and connection");
@@ -242,6 +244,46 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </Select>
                   </FormControl>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Featured</FormLabel>
+                    <FormDescription>
+                      This product will appear on the Home Page
+                    </FormDescription>
+                  </div>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isArchived"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>Archived</FormLabel>
+                    <FormDescription>
+                      Hide the product from your Store
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
