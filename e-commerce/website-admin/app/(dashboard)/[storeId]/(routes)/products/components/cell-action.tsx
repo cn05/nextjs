@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { BannerColumn } from "./column";
+import { ProductColumn } from "./column";
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Copy, Edit, MoreHorizontal, Trash } from "lucide-react";
@@ -17,7 +17,7 @@ import { useState } from "react";
 import { AlertModal } from "@/components/modals/alert-modal";
 
 interface CellActionProps {
-  data: BannerColumn;
+  data: ProductColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
@@ -35,9 +35,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/banners/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/products/${data.id}`);
       router.refresh();
-      router.push(`/${params.storeId}/banners`);
+      router.push(`/${params.storeId}/products`);
       toast.success("Deleted succesfully!");
     } catch (error) {
       toast.error("Check your data and connection");
@@ -73,7 +73,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/banners/${data.id}`)}
+            onClick={() =>
+              router.push(`/${params.storeId}/products/${data.id}`)
+            }
           >
             <Edit className="mr-2 h-4 w-4" />
             Update
